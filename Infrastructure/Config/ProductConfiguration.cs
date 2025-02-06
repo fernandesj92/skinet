@@ -12,7 +12,6 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
         builder.Property(x=>x.Price).HasColumnType("decimal(18,2)");
         builder.Property(x=>x.Name).HasMaxLength(100);
-        builder.Property(x=>x.Description).HasMaxLength(150);
         builder.Property(x=>x.Brand).HasMaxLength(50);
 
 
