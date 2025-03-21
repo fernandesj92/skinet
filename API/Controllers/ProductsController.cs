@@ -1,4 +1,6 @@
 using System;
+using System.Xml.Serialization;
+using API.RequestHelpers;
 using Core.Entities;
 using Core.Interface;
 using Core.Specifications;
@@ -11,19 +13,17 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductsController (IGenericRepository<Product> repo) : ControllerBase
+public class ProductsController (IGenericRepository<Product> repo) : BaseApiController
 {
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string? brand, string? type,string? sort)
+    public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery]ProductSpecParams specParams)
     //if we dont use [ApiController] decorator on top then need to specify for each string parameter like this GetProducts([FromQuery]string? brand,[FromQuery] string? type,[FromQuery] string? sort)
     {
         //Create Spec where expression
-        var spec = new ProductSpecification(brand,type,sort);
+        var spec = new ProductSpecification(specParams);
         
-        //pass spec where expression to generic repo
-        var products= await repo.ListAsync(spec);
-        return Ok(products);
+        return await CreatePageResult(repo,spec,specParams.PageIndex,specParams.PageSize);
     }
 
     [HttpGet("{id:int}")]
